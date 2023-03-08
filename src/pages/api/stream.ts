@@ -4,15 +4,26 @@ import {
   ParsedEvent,
   ReconnectInterval
 } from "eventsource-parser"
-
+import schedule from 'node-schedule';
+import {Singleton} from "../../utils/Singleton"
 const localEnv = import.meta.env.OPENAI_API_KEY
 const vercelEnv = process.env.OPENAI_API_KEY
 
 const apiKeys = ((localEnv || vercelEnv)?.split(/\s*\|\s*/) ?? []).filter(
   Boolean
 )
-
+schedule.scheduleJob('10 0 * * *', () => {
+  const instance = Singleton.getInstance();
+  console.log("清除前：",instance.getAll())
+  instance.clean();
+  console.log("清除后：",instance.getAll())
+}); // 每天0点清除
+schedule.scheduleJob('*/60 * * * * *', () => {
+  const instance = Singleton.getInstance();
+  console.log("清除前：",instance.getAll())
+}); // 每天0点清除
 export const post: APIRoute = async context => {
+  const instance = Singleton.getInstance();
   const body = await context.request.json()
   const apiKey = apiKeys.length
     ? apiKeys[Math.floor(Math.random() * apiKeys.length)]
@@ -22,14 +33,23 @@ export const post: APIRoute = async context => {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
-  if (!key.startsWith("sk-")) key = apiKey
+  if (!key.startsWith("sk-")){
+    key = apiKey
+    console.log(context.clientAddress,'用的系统的key')
+    if(!instance.addNum(context.clientAddress)){
+      console.log('ip',context.clientAddress,'使用次数到达上限')
+      return new Response("今天超过使用次数了,请使用自己的apikey或者明日再来")
+    }
+  }else{
+    console.log(context.clientAddress,'用的自己的key')
+  }
   if (!key) {
     return new Response("没有填写 OpenAI API key")
   }
   if (!messages) {
     return new Response("没有输入任何文字")
   }
-
+  return new Response("没有输入任何")
   const completion = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",

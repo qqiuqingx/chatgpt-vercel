@@ -112,13 +112,7 @@ export default function Setting(props: {
           <span ml-1>设置</span>
         </div>
         <div class="flex">
-          <div
-            class="flex items-center cursor-pointer hover:text-slate-3 "
-            onClick={props.reAnswer}
-          >
-            <button class="i-carbon:reset" />
-            <span ml-1>重新回答</span>
-          </div>
+   
           <div
             class="flex items-center cursor-pointer ml-3 hover:text-slate-3 "
             onClick={props.clear}
