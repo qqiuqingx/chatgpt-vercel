@@ -18,7 +18,7 @@ schedule.scheduleJob('10 0 * * *', () => {
   instance.clean();
   console.log("清除后：",instance.getAll())
 }); // 每天0点清除
-schedule.scheduleJob('*/60 * * * * *', () => {
+schedule.scheduleJob('0 */1 * * * *', () => {
   const instance = Singleton.getInstance();
   console.log("清除前：",instance.getAll())
 }); // 每天0点清除
@@ -49,7 +49,7 @@ export const post: APIRoute = async context => {
   if (!messages) {
     return new Response("没有输入任何文字")
   }
-  return new Response("没有输入任何")
+  
   const completion = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
