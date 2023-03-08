@@ -320,7 +320,7 @@ export default function () {
                 if (value === "/" || value === " ")
                   return setCompatiblePrompt(prompts)
                 const promptKey = value.replace(/^[\/ ](.*)/, "$1")
-                if (promptKey !== value)
+            
                   setCompatiblePrompt(fzf.find(promptKey).map(k => k.item))
               }}
               style={{
