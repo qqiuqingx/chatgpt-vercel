@@ -49,7 +49,6 @@ export const post: APIRoute = async context => {
   if (!messages) {
     return new Response("没有输入任何文字")
   }
-  
   const completion = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
